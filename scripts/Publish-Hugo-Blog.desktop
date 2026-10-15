@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=发布 Hugo 博客
+Comment=构建、提交并推送 Hugo 博客
+Exec=env PUBLISH_INTERACTIVE=1 /home/yhy/Projects/Hugo/scripts/publish.sh
+Icon=text-x-script
+Terminal=true
+Categories=Development;
