@@ -1,0 +1,9 @@
+{{ define "main" }}
+  <article class="article section">
+    <a class="back-link" href="{{ "posts/" | relURL }}">← 返回文章</a>
+    <p class="eyebrow"><span></span>{{ with index .Params.tags 0 }}{{ . }}{{ else }}NOTE{{ end }}</p>
+    <h1>{{ .Title }}</h1>
+    <p class="article-meta">{{ .Date.Format "2006 年 01 月 02 日" }}{{ with .Params.source_note }} · 源自知识库：{{ . }}{{ end }}</p>
+    <div class="prose">{{ .Content }}</div>
+  </article>
+{{ end }}

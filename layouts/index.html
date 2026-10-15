@@ -1,0 +1,72 @@
+{{ define "main" }}
+  {{ $posts := where .Site.RegularPages "Section" "posts" }}
+  {{ $recent := first 4 ($posts.ByDate.Reverse) }}
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-copy">
+      <p class="eyebrow"><span></span> PERSONAL KNOWLEDGE GARDEN</p>
+      <h1 id="hero-title">向外认知，<br><em>向内生长。</em></h1>
+      <p class="hero-lede">记录工程实践、智能体探索与系统化学习。这里不是答案的仓库，而是一张持续更新的思维地图。</p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="#recent">阅读最近更新 <span aria-hidden="true">↓</span></a>
+        <a class="text-link" href="#about">认识这个花园 <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+    <aside class="hero-index" aria-label="网站主题索引">
+      <div class="index-topline"><span>NOW GROWING</span><span>2026</span></div>
+      <div class="orbit" aria-hidden="true"><i></i><i></i><i></i><b>✦</b></div>
+      <ul>
+        <li><span>01</span> 工程与系统设计</li>
+        <li><span>02</span> AI Agent 实践</li>
+        <li><span>03</span> 基础知识重构</li>
+      </ul>
+    </aside>
+  </section>
+
+  <section id="recent" class="section recent-section" aria-labelledby="recent-title">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow"><span></span> FIELD NOTES</p>
+        <h2 id="recent-title">最近更新</h2>
+      </div>
+      <a class="text-link" href="{{ "posts/" | relURL }}">全部文章 <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="post-grid">
+      {{ range $recent }}
+        <article class="post-card">
+          <p class="post-meta">{{ .Date.Format "2006.01.02" }} · {{ with index .Params.tags 0 }}{{ . }}{{ end }}</p>
+          <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+          <p>{{ .Summary }}</p>
+          <a class="card-link" href="{{ .RelPermalink }}" aria-label="阅读：{{ .Title }}">阅读笔记 <span aria-hidden="true">↗</span></a>
+        </article>
+      {{ end }}
+    </div>
+  </section>
+
+  <section id="topics" class="section topics-section" aria-labelledby="topics-title">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow"><span></span> EXPLORE BY THREAD</p>
+        <h2 id="topics-title">正在追索的主题</h2>
+      </div>
+      <p class="section-note">从项目现场出发，再回到可复用的知识结构。</p>
+    </div>
+    <div class="topic-list">
+      <a class="topic topic-orange" href="{{ "tags/ai/" | relURL }}"><span class="topic-number">01</span><span><strong>AI 与智能体</strong><small>RAG · Tools · Memory · Workflow</small></span><b aria-hidden="true">↗</b></a>
+      <a class="topic topic-blue" href="{{ "tags/java/" | relURL }}"><span class="topic-number">02</span><span><strong>工程与系统</strong><small>Java · 架构 · 部署 · 系统设计</small></span><b aria-hidden="true">↗</b></a>
+      <a class="topic topic-green" href="{{ "tags/计算机基础/" | relURL }}"><span class="topic-number">03</span><span><strong>基础与方法</strong><small>网络 · 算法 · 复盘 · 学习路径</small></span><b aria-hidden="true">↗</b></a>
+    </div>
+  </section>
+
+  <section id="about" class="about-section" aria-labelledby="about-title">
+    <div class="about-stamp" aria-hidden="true">NOTE<br>TO<br>SELF</div>
+    <div>
+      <p class="eyebrow"><span></span> ABOUT THIS SPACE</p>
+      <h2 id="about-title">给持续学习<br>留一块安静的地方。</h2>
+    </div>
+    <div class="about-copy">
+      <p>这里从一个私人 Markdown 知识库延伸出来。项目记录、学习笔记和未完成的想法会在这里被重新整理，慢慢形成可以回看的脉络。</p>
+      <p>内容优先于热闹，实践优先于结论。欢迎从任意一篇笔记开始阅读。</p>
+      <a class="button button-outline" href="{{ "posts/" | relURL }}">浏览文章库 <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+{{ end }}
