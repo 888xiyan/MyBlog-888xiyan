@@ -1,0 +1,32 @@
+{{ define "main" }}
+  <section class="bookmarks section" aria-labelledby="bookmarks-title">
+    <div class="bookmarks-heading">
+      <p class="eyebrow"><span></span> COLLECTED ON THE WAY</p>
+      <h1 id="bookmarks-title">收藏的网站</h1>
+      <p>{{ .Params.description }}</p>
+    </div>
+
+    <div class="bookmark-grid">
+      {{ range $index, $category := hugo.Data.bookmarks.categories }}
+        <section class="bookmark-group" aria-labelledby="bookmark-category-{{ $index }}">
+          <header>
+            <span>{{ printf "%02d" (add $index 1) }}</span>
+            <div>
+              <h2 id="bookmark-category-{{ $index }}">{{ $category.title }}</h2>
+              <p>{{ $category.description }}</p>
+            </div>
+          </header>
+          <ul>
+            {{ range $category.items }}
+              <li>
+                <a href="{{ .url }}" target="_blank" rel="noopener noreferrer">
+                  <span>{{ .name }}</span><b aria-hidden="true">↗</b>
+                </a>
+              </li>
+            {{ end }}
+          </ul>
+        </section>
+      {{ end }}
+    </div>
+  </section>
+{{ end }}
