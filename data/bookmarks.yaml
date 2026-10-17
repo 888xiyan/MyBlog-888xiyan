@@ -22,6 +22,10 @@ categories:
         url: "https://www.modelscope.cn/"
       - name: "AgentRouter"
         url: "https://agentrouter.org/"
+      - name: "AI 广场"
+        url: "https://www.aiguangchang.cn/"
+      - name: "Price AI"
+        url: "https://priceai.cc/"
 
   - title: "编程与工程"
     description: "后端开发、开源项目、工具与练习平台。"
@@ -34,6 +38,8 @@ categories:
         url: "https://javaguide.cn/"
       - name: "AI Agent Book"
         url: "https://github.com/bojieli/ai-agent-book"
+      - name: "CS-Books"
+        url: "https://github.com/forthespada/CS-Books#Donate"
       - name: "Apache ECharts"
         url: "https://echarts.apache.org/zh/index.html"
       - name: "IntelliJ IDEA"
@@ -120,3 +126,9 @@ categories:
         url: "https://blockly.games/"
       - name: "CrazyGames"
         url: "https://www.crazygames.com/"
+
+  - title: "我的朋友"
+    description: "朋友们在互联网留下的小小据点。"
+    items:
+      - name: "Carry Rao"
+        url: "https://carryrao.top/"
