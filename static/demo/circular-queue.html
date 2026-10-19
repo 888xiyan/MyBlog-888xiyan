@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>环形数组队列动画</title>
+<style>
+:root{--bg:#f2f4f7;--fg:#14202b;--mut:#5d6b78;--card:#fff;--line:#d3d9e0;--on:#dfe6ff;--onb:#3b5bdb;--fr:#e8590c;--re:#2b8a3e;--stale:#9aa5b1;--err:#c92a2a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10161d;--fg:#e6ebf0;--mut:#98a5b2;--card:#18212b;--line:#2d3a47;--on:#22306b;--onb:#7d97ff;--fr:#ff8a4c;--re:#5fd07a;--stale:#5d6b78;--err:#ff7b7b}}
+:root[data-theme="dark"]{--bg:#10161d;--fg:#e6ebf0;--mut:#98a5b2;--card:#18212b;--line:#2d3a47;--on:#22306b;--onb:#7d97ff;--fr:#ff8a4c;--re:#5fd07a;--stale:#5d6b78;--err:#ff7b7b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.65}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:1.5rem;margin:0 0 4px}
+.sub{color:var(--mut);margin:0 0 18px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px}
+#ring{position:relative;width:340px;height:340px;margin:0 auto;max-width:100%}
+.slot{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;border:2px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:background .3s,border-color .3s,color .3s;line-height:1}
+.slot b{font-size:1rem}.slot i{font-size:.62rem;font-style:normal;color:var(--mut);margin-top:2px}
+.slot.on{background:var(--on);border-color:var(--onb)}
+.slot.stale b{color:var(--stale);text-decoration:line-through}
+.slot.hot{animation:hot .6s}
+@keyframes hot{0%{transform:scale(1.5)}100%{transform:scale(1)}}
+.pt{position:absolute;margin:0;transform:translate(-50%,-50%);padding:1px 7px;border-radius:99px;font-size:.72rem;font-weight:700;color:#fff;white-space:nowrap;transition:left .45s ease,top .45s ease,opacity .3s}
+#pf{background:var(--fr)}#pr{background:var(--re)}
+#mid{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;font-size:.8rem;color:var(--mut);line-height:1.3}
+#mid b{display:block;font-size:1.4rem;color:var(--fg)}
+#lin{display:grid;grid-template-columns:repeat(8,1fr);gap:4px}
+.cell{text-align:center}
+.bx{height:44px;border:2px solid var(--line);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;transition:background .3s,border-color .3s}
+.bx.on{background:var(--on);border-color:var(--onb)}
+.bx.stale{color:var(--stale);text-decoration:line-through}
+.ix{font-size:.72rem;color:var(--mut)}
+.mk{min-height:22px;font-size:.72rem;font-weight:700;color:var(--fr)}
+.mk span{display:inline-block;padding:0 5px;border-radius:99px;color:#fff;margin:0 1px}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+button{font:inherit;padding:7px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
+button:hover{border-color:var(--onb)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--onb);outline-offset:2px}
+button.main{background:var(--onb);border-color:var(--onb);color:#fff}
+#formula{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88rem;background:var(--bg);border-radius:8px;padding:8px 10px;margin-bottom:8px;overflow-x:auto}
+#msg{min-height:3.3em;margin:0}
+#msg.err{color:var(--err)}
+h2{font-size:1rem;margin:0 0 6px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.cols p{margin:0;color:var(--mut);font-size:.9rem}
+.lg{display:flex;gap:14px;flex-wrap:wrap;font-size:.8rem;color:var(--mut);margin-top:10px;justify-content:center}
+.lg em{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:4px;font-style:normal}
+@media (prefers-reduced-motion:reduce){.pt,.slot,.bx{transition:none}.slot.hot{animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>环形数组队列</h1>
+<p class="sub">只用 front 和 size 两个变量，rear 现算。点“入队”“出队”观察指针怎么走。</p>
+
+<div class="panel">
+ <div class="ctl">
+  <button class="main" id="bPush">入队</button>
+  <button id="bPop">出队</button>
+  <button id="bAuto">自动演示</button>
+  <button id="bReset">重置</button>
+  <label><input type="checkbox" id="cCirc" checked> 环形（取余）</label>
+ </div>
+ <div id="ring">
+  <div id="mid"><b id="sz">0</b>size / 容量 8</div>
+  <div class="pt" id="pf">front</div>
+  <div class="pt" id="pr">rear</div>
+ </div>
+ <div class="lg"><span><em style="background:var(--on);border:1px solid var(--onb)"></em>有效区（队列本体）</span><span><em style="border:1px solid var(--line)"></em>空闲槽位</span><span><em style="background:var(--stale)"></em>删除线：旧值还在，但不会被读到</span></div>
+</div>
+
+<div class="panel">
+ <h2>同一个数组，拉直了看</h2>
+ <div id="lin"></div>
+</div>
+
+<div class="panel">
+ <div id="formula"></div>
+ <p id="msg"></p>
+</div>
+
+<div class="panel cols">
+ <div><h2>入队</h2><p>先算 rear = (front + size) % 容量，把新值写进 rear 所在的格子，size 加 1。front 不动。</p></div>
+ <div><h2>出队</h2><p>front 后移一位（越过末尾就回到 0），size 减 1。不搬动任何元素，所以是 O(1)。旧值留在原处，等着被下次入队覆盖。</p></div>
+ <div><h2>为什么取余</h2><p>去掉取余再试试：rear 走到末尾后就无法入队，哪怕前面空着很多格。取余让末尾接上开头，空位得以重复使用。</p></div>
+</div>
+</div>
+
+<script>
+const CAP=8,R=104,C=170;
+let nums,front,size,nx,circ=true,timer=null;
+const $=id=>document.getElementById(id);
+const ring=$('ring'),lin=$('lin'),slots=[],cells=[];
+for(let i=0;i<CAP;i++){
+  const a=(i*360/CAP-90)*Math.PI/180;
+  const s=document.createElement('div');s.className='slot';
+  s.style.left=(C+R*Math.cos(a))+'px';s.style.top=(C+R*Math.sin(a))+'px';
+  s.innerHTML='<b></b><i>'+i+'</i>';ring.appendChild(s);slots.push(s);
+  const c=document.createElement('div');c.className='cell';
+  c.innerHTML='<div class="bx"></div><div class="ix">'+i+'</div><div class="mk"></div>';
+  lin.appendChild(c);cells.push(c);
+}
+function place(el,idx,r){
+  if(idx>=CAP){el.style.opacity=0;return}
+  const a=(idx*360/CAP-90)*Math.PI/180;
+  el.style.opacity=1;el.style.left=(C+r*Math.cos(a))+'px';el.style.top=(C+r*Math.sin(a))+'px';
+}
+const rearIdx=()=>circ?(front+size)%CAP:front+size;
+const valid=i=>{const d=circ?(i-front+CAP)%CAP:i-front;return d>=0&&d<size};
+const canPush=()=>circ?size<CAP:front+size<CAP;
+
+function render(msg,hot,err){
+  for(let i=0;i<CAP;i++){
+    const v=nums[i],on=valid(i);
+    const cls=on?'on':(v!=null?'stale':'');
+    slots[i].className='slot '+cls+(hot===i?' hot':'');
+    slots[i].querySelector('b').textContent=v==null?'':v;
+    const bx=cells[i].querySelector('.bx');
+    bx.className='bx '+cls;bx.textContent=v==null?'':v;
+    let m='';
+    if(i===front)m+='<span style="background:var(--fr)">F</span>';
+    if(i===rearIdx())m+='<span style="background:var(--re)">R</span>';
+    cells[i].querySelector('.mk').innerHTML=m;
+  }
+  place($('pf'),front,150);place($('pr'),rearIdx(),66);
+  $('sz').textContent=size;
+  const r=rearIdx();
+  let f=circ?`rear = (front + size) % 容量 = (${front} + ${size}) % ${CAP} = ${r}`
+            :`rear = front + size = ${front} + ${size} = ${r}`+(r>=CAP?'  ← 已越过数组末尾':'');
+  if(size>0){
+    const wrap=front+size>CAP&&circ;
+    f+=`\n有效区：从 ${front} 开始共 ${size} 个`+(wrap?`，即 [${front}, ${CAP-1}] 和 [0, ${r-1}] 两段`:'');
+  }else f+='\n队列为空';
+  $('formula').innerHTML=f.replace(/\n/g,'<br>');
+  const m=$('msg');m.textContent=msg;m.className=err?'err':'';
+}
+function push(){
+  if(!canPush()){
+    render(circ?'队列已满：size 等于容量，圆环上没有空闲弧了，入队被拒绝。':'rear 已经走到数组末尾，无法入队，尽管 front 左边还有空位。打开“环形”再试一次。',null,true);return false}
+  const r=rearIdx(),v=nx++;
+  nums[r]=v;size++;
+  render(`入队 ${v}：写入索引 ${r}，size 变为 ${size}。front 没动，rear 自动后移到 ${rearIdx()%(circ?CAP:99)}${!circ&&rearIdx()>=CAP?'（越界）':''}。`,r);
+  return true;
+}
+function pop(){
+  if(size===0){render('队列为空，没有可出队的元素。',null,true);return false}
+  const v=nums[front],old=front;
+  front=circ?(front+1)%CAP:front+1;size--;
+  render(`出队 ${v}：front 从 ${old} 移到 ${front>=CAP?CAP+'（越界）':front}，size 变为 ${size}。索引 ${old} 里的旧值还在，但已不属于队列。`);
+  return true;
+}
+function reset(){
+  stop();nums=Array(CAP).fill(null);front=0;size=0;nx=1;
+  render('初始状态：front = 0，size = 0。点“入队”开始。');
+}
+function stop(){if(timer){clearInterval(timer);timer=null}$('bAuto').textContent='自动演示'}
+function auto(){
+  if(timer){stop();return}
+  $('bAuto').textContent='停止';
+  timer=setInterval(()=>{
+    if(size===0&&!canPush()){stop();render('非环形模式下，front 和 rear 都到了末尾，整个数组再也用不上了。这就是环形的意义。',null,true);return}
+    if(size===0||Math.random()<.58)push();else pop();
+  },950);
+}
+$('bPush').onclick=()=>{stop();push()};
+$('bPop').onclick=()=>{stop();pop()};
+$('bAuto').onclick=auto;
+$('bReset').onclick=reset;
+$('cCirc').onchange=e=>{circ=e.target.checked;reset()};
+reset();
+</script>
+</body>
+</html>
