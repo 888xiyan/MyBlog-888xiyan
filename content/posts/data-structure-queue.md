@@ -39,9 +39,7 @@ rear = (front + size) % capacity
 
 下面这个 demo 可以直接点"入队 / 出队"观察指针怎么走，也可以取消勾选"环形"，看看不取余时 rear 走到末尾后整个数组就再也用不上的窘境：
 
-{{< rawhtml >}}
-<iframe src="../demo/circular-queue.html" title="环形数组队列动画" loading="lazy" style="width:100%;height:980px;border:1px solid #d3d9e0;border-radius:10px;background:#fff;" ></iframe>
-{{< /rawhtml >}}
+{{< iframe src="demo/circular-queue.html" title="环形数组队列动画" height="980px" >}}
 
 > 如果在手机上阅读，动画可能需要横屏或放大查看。
 

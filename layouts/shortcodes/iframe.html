@@ -1,0 +1,4 @@
+{{- $src := .Get "src" | relURL -}}
+{{- $title := .Get "title" | default "交互演示" -}}
+{{- $height := .Get "height" | default "980px" -}}
+<iframe src="{{ $src }}" title="{{ $title }}" loading="lazy" style="width:100%;height:{{ $height }};border:1px solid #d3d9e0;border-radius:10px;background:#fff;"></iframe>
