@@ -42,6 +42,10 @@ menu:
       name: 文章
       url: /posts/
       weight: 10
+    - identifier: build-from-scratch
+      name: Build-from-Scratch
+      url: https://github.com/888xiyan/Build-from-Scratch
+      weight: 15
     - identifier: archives
       name: 归档
       url: /archives/
